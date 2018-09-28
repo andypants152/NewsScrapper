@@ -35,5 +35,35 @@ $.getJSON("/articles?saved=true", function (data) {
 
   $(document).on("click", ".btn.note", function(){
       var article = $(this).parents(".card").data();
-      $("#note").html("<h1> Notes for " + article._id + "</h1>");
-  })
+      $("#note").empty();
+
+      $.ajax({
+          method: "GET",
+          url: "/notes/" + article._id
+      }).then(function(data){
+        $("#note").append("<h3 class='modal-title'> Notes for \"" + data.title + "\"</h1>");
+        console.log(data);
+        data.note.forEach(note => {
+            $("#note").append("<h5>" + note.body + "</h5>");
+            $("#note").append("<button data-id='" + note._id + "' id='deleteNote'>Delete Note</button>");
+        })
+        $("#note").append("<textarea id='bodyinput' name='body'>Note...</textarea>");
+        $("#note").append("<button data-id='" + article._id + "' id='savenote'>Save Note</button>");
+  
+      })
+      
+  });
+
+  $(document).on("click", "#savenote", function() {
+    var thisId = $(this).attr("data-id");
+  
+    $.ajax({
+      method: "POST",
+      url: "/notes/" + thisId,
+      data: {
+        body: $("#bodyinput").val()
+      }
+    });
+  
+    $("#bodyinput").val("");
+  });

@@ -67,11 +67,18 @@ module.exports = function (app, db) {
         res.sendStatus(200);
     })
 
-    app.get("/notes/:articleID")
+    app.get("/notes/:articleID", function(req, res) {
+        db.Article.findOne({"_id": req.params.articleID}).populate("note")
+        .then(function(article){
+          res.json(article);
+        }).catch(function(err){
+          res.json(err);
+        })
+      })
 
-    app.post("/notes", function (req, res) {
+    app.post("/notes/:articleID", function (req, res) {
         db.Note.create(req.body).then(function (dbNote) {
-            return db.Article.findOneAndUpdate({ "_id": req.params.id }, { $push: { note: dbNote._id } }, { new: true });
+            return db.Article.findOneAndUpdate({ "_id": req.params.articleID }, { $push: { note: dbNote._id } }, { new: true });
         }).then(function (dbArticle) {
             res.json(dbArticle);
         }).catch(function (err) {
