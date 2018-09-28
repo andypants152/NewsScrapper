@@ -86,4 +86,12 @@ module.exports = function (app, db) {
         })
     })
 
+    app.delete("/notes/:noteID", function(req, res){
+        db.Note.deleteOne({ "_id": req.params.noteID }).then(function(dbNote){
+            res.json(dbNote);
+        }).catch(function(err){
+            res.json(err);
+        })
+    })
+
 }

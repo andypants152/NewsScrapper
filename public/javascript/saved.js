@@ -67,3 +67,14 @@ $.getJSON("/articles?saved=true", function (data) {
   
     $("#bodyinput").val("");
   });
+
+  $(document).on("click", "#deleteNote", function(){
+      var thisId = $(this).attr("data-id");
+
+      console.log(thisId);
+
+      $.ajax({
+          method: "DELETE",
+          url: "/notes/" + thisId
+      })
+  })
