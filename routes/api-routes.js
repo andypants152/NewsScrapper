@@ -18,26 +18,53 @@ module.exports = function (app, db) {
                     .catch(function (err) {
                         return res.json(err);
                     });
-
             })
 
-            res.redirect("/");
-
         })
+
+        res.redirect("/");
 
     })
 
     app.get("/api/clear", function (req, res) {
-
+        db.Article.deleteMany().catch(function (err) {
+            res.json(err);
+        })
+        res.redirect("/");
     })
 
-    app.get("/articles", function(req, res) {
-        // TODO: Finish the route so it grabs all of the articles
-        db.Article.find({}).then(function(dbArticle){
-          res.json(dbArticle);
-        }).catch(function(err){
-          res.json(err);
+    app.get("/articles", function (req, res) {
+
+        if (req.query.saved === "true") {
+            db.Article.find({ "saved": true }).then(function (dbArticle) {
+                res.json(dbArticle);
+            }).catch(function (err) {
+                res.json(err);
+            })
+        }
+        else if(req.query.saved === "false"){
+            db.Article.find({ "saved": false }).then(function (dbArticle) {
+                res.json(dbArticle);
+            }).catch(function (err) {
+                res.json(err);
+            })
+        }
+        else{
+            db.Article.find({}).then(function (dbArticle) {
+                res.json(dbArticle);
+            }).catch(function (err) {
+                res.json(err);
+            })
+        }
+
+    });
+
+    app.post("/articles/:id", function (req, res) {
+        console.log(req.body);
+        db.Article.updateOne({ "_id": req.params.id }, { $set: { saved: req.body.saved } }).catch(function (err) {
+            res.json(err);
         })
-      });
-      
+        res.send(200);
+    })
+
 }
