@@ -1,9 +1,9 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
-var cheerio = require("cheerio");
 var exphbs = require("express-handlebars");
-var request = require("request");
+
+var db = require("./models");
 
 //Creating or express instance
 var app = express();
@@ -31,7 +31,7 @@ app.use(express.static("public"));
 
 //Routes
 require("./routes/html-routes.js")(app);
-require("./routes/api-routes.js")(app);
+require("./routes/api-routes.js")(app, db);
 
 // Start the server
 app.listen(PORT, function() {
