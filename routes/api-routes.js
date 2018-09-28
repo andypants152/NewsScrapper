@@ -42,14 +42,14 @@ module.exports = function (app, db) {
                 res.json(err);
             })
         }
-        else if(req.query.saved === "false"){
+        else if (req.query.saved === "false") {
             db.Article.find({ "saved": false }).then(function (dbArticle) {
                 res.json(dbArticle);
             }).catch(function (err) {
                 res.json(err);
             })
         }
-        else{
+        else {
             db.Article.find({}).then(function (dbArticle) {
                 res.json(dbArticle);
             }).catch(function (err) {
@@ -61,10 +61,22 @@ module.exports = function (app, db) {
 
     app.post("/articles/:id", function (req, res) {
         console.log(req.body);
-        db.Article.updateOne({ "_id": req.params.id }, { $set: { saved: req.body.saved } }).catch(function (err) {
+        db.Article.updateOne({ "_id": req.params.id }, { $set: req.body }).catch(function (err) {
             res.json(err);
         })
-        res.send(200);
+        res.sendStatus(200);
+    })
+
+    app.get("/notes/:articleID")
+
+    app.post("/notes", function (req, res) {
+        db.Note.create(req.body).then(function (dbNote) {
+            return db.Article.findOneAndUpdate({ "_id": req.params.id }, { $push: { note: dbNote._id } }, { new: true });
+        }).then(function (dbArticle) {
+            res.json(dbArticle);
+        }).catch(function (err) {
+            res.json(err);
+        })
     })
 
 }

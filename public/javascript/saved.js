@@ -8,7 +8,8 @@ $.getJSON("/articles?saved=true", function (data) {
           $("<a class='article-link'>")
             .attr("href", data[i].link)
             .text(data[i].title),
-          $("<a class='btn btn-danger delete'><i class='far fa-trash-alt'></i></a>")
+          $("<a class='btn btn-danger delete'><i class='far fa-trash-alt'></i></a>"),
+          $("<a class='btn btn-success note' data-toggle='modal' data-target='.notesModal'><i class='fas fa-comment-alt'></i></a>")
         )
       );
       card.append(cardHeader);
@@ -16,6 +17,8 @@ $.getJSON("/articles?saved=true", function (data) {
       $("#articles").append(card);
     }
   });
+
+  
 
   $(document).on("click", ".btn.delete", function () {
     var articleToDelete = $(this).parents(".card").data();
@@ -29,3 +32,8 @@ $.getJSON("/articles?saved=true", function (data) {
     })
   
   });
+
+  $(document).on("click", ".btn.note", function(){
+      var article = $(this).parents(".card").data();
+      $("#note").html("<h1> Notes for " + article._id + "</h1>");
+  })
